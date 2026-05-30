@@ -15,7 +15,7 @@ export const SocketContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (authUser) {
-			const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+			const backendURL = import.meta.env.VITE_BACKEND_URL || " https://mernapp-xgyc.onrender.com";
 			const socket = io(backendURL, {
 				query: {
 					userId: authUser._id,
