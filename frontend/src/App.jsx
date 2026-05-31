@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import SignUp from "./pages/signup/SignUp";
+import AuthLayout from "./components/layout/AuthLayout";
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
 
@@ -15,17 +16,25 @@ function App() {
 				<Route
 					path='/login'
 					element={
-						<div className='flex-1 flex items-center justify-center p-4 sm:p-6'>
-							{authUser ? <Navigate to='/' /> : <Login />}
-						</div>
+						authUser ? (
+							<Navigate to='/' />
+						) : (
+							<AuthLayout>
+								<Login />
+							</AuthLayout>
+						)
 					}
 				/>
 				<Route
 					path='/signup'
 					element={
-						<div className='flex-1 flex items-center justify-center p-4 sm:p-6'>
-							{authUser ? <Navigate to='/' /> : <SignUp />}
-						</div>
+						authUser ? (
+							<Navigate to='/' />
+						) : (
+							<AuthLayout title='Join ChatApp'>
+								<SignUp />
+							</AuthLayout>
+						)
 					}
 				/>
 			</Routes>

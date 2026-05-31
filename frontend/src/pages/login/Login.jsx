@@ -15,9 +15,7 @@ const Login = () => {
 	return (
 		<div className='auth-card'>
 			<div className='text-center mb-6 sm:mb-8'>
-				<h1 className='text-2xl sm:text-3xl font-bold text-white'>
-					Welcome back to <span className='text-sky-400'>ChatApp</span>
-				</h1>
+				<h1 className='text-2xl sm:text-3xl font-bold text-white'>Welcome back</h1>
 				<p className='text-sm text-slate-400 mt-2'>Sign in to continue messaging</p>
 			</div>
 
@@ -27,7 +25,7 @@ const Login = () => {
 					<input
 						type='text'
 						placeholder='Enter username'
-						className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+						className='input-field'
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 						autoComplete='username'
@@ -39,25 +37,21 @@ const Login = () => {
 					<input
 						type='password'
 						placeholder='Enter password'
-						className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+						className='input-field'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						autoComplete='current-password'
 					/>
 				</div>
 
-				<button
-					type='submit'
-					disabled={loading}
-					className='w-full btn bg-sky-500 hover:bg-sky-400 border-0 text-white rounded-xl mt-2 h-11'
-				>
+				<button type='submit' disabled={loading} className='btn-primary'>
 					{loading ? <span className='loading loading-spinner loading-sm' /> : "Sign In"}
 				</button>
 			</form>
 
 			<p className='text-center text-sm text-slate-400 mt-6'>
 				{"Don't have an account? "}
-				<Link to='/signup' className='text-sky-400 hover:text-sky-300 font-medium'>
+				<Link to='/signup' className='text-sky-400 hover:text-sky-300 font-medium transition-colors'>
 					Sign up
 				</Link>
 			</p>

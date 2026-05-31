@@ -4,7 +4,7 @@
 
 @layer base {
 	html {
-		@apply antialiased;
+		@apply antialiased scroll-smooth;
 	}
 
 	body {
@@ -23,15 +23,50 @@
 
 @layer components {
 	.glass-panel {
-		@apply bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-2xl;
+		@apply bg-slate-900/75 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/20;
 	}
 
 	.auth-card {
-		@apply glass-panel w-full max-w-md rounded-2xl p-6 sm:p-8 animate-fade-in;
+		@apply glass-panel w-full max-w-[420px] rounded-2xl p-6 sm:p-8 animate-fade-in;
 	}
 
 	.chat-shell {
-		@apply glass-panel w-full h-full max-h-dvh sm:max-h-[min(90dvh,720px)] rounded-none sm:rounded-2xl overflow-hidden flex;
+		@apply glass-panel w-full h-full max-h-dvh sm:max-h-[min(92dvh,780px)] rounded-none sm:rounded-2xl overflow-hidden flex;
+	}
+
+	.input-field {
+		@apply w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 transition;
+	}
+
+	.btn-primary {
+		@apply w-full btn bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0 text-white rounded-xl mt-2 h-11 shadow-lg shadow-sky-500/20;
+	}
+
+	.auth-page {
+		@apply relative flex-1 flex items-center justify-center min-h-dvh overflow-hidden p-4 sm:p-6;
+	}
+
+	.auth-bg {
+		@apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+		background-image: url("/images/login-bg.png");
+		filter: blur(10px);
+		transform: scale(1.08);
+	}
+
+	.auth-overlay {
+		@apply absolute inset-0 bg-slate-950/55 backdrop-blur-[2px];
+	}
+
+	.auth-content {
+		@apply relative z-10 w-full max-w-[420px] flex flex-col;
+	}
+
+	.auth-brand {
+		@apply flex items-center justify-center gap-2.5 mb-5 sm:mb-6;
+	}
+
+	.auth-brand-icon {
+		@apply flex items-center justify-center w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/30;
 	}
 }
 
@@ -85,6 +120,6 @@
 
 @supports (padding: env(safe-area-inset-bottom)) {
 	.safe-bottom {
-		padding-bottom: env(safe-area-inset-bottom);
+		padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 	}
 }

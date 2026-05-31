@@ -7,8 +7,8 @@ const Home = () => {
 	const isMobileChatOpen = !!selectedConversation;
 
 	return (
-		<div className='flex-1 flex items-stretch justify-center p-0 sm:p-4 md:p-6 min-h-0'>
-			<div className='chat-shell'>
+		<div className='flex-1 flex items-stretch justify-center p-0 sm:p-4 md:p-6 min-h-0 w-full'>
+			<div className='chat-shell w-full max-w-6xl'>
 				<div
 					className={`${
 						isMobileChatOpen ? "hidden md:flex" : "flex"
@@ -20,7 +20,7 @@ const Home = () => {
 				<div
 					className={`${
 						isMobileChatOpen ? "flex" : "hidden md:flex"
-					} flex-1 flex-col min-w-0 min-h-0`}
+					} flex-1 flex-col min-w-0 min-h-0 bg-slate-900/30`}
 				>
 					<MessageContainer />
 				</div>

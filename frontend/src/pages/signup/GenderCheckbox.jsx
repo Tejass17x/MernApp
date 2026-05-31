@@ -1,13 +1,15 @@
+import UserAvatar from "../../components/common/UserAvatar";
+
 const GenderCheckbox = ({ onCheckboxChange, selectedGender }) => {
 	return (
 		<div>
-			<p className='text-sm font-medium text-slate-300 mb-2'>Gender</p>
-			<div className='flex flex-wrap gap-3'>
+			<p className='text-sm font-medium text-slate-300 mb-2'>Gender & Avatar</p>
+			<div className='grid grid-cols-2 gap-3'>
 				<label
-					className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 cursor-pointer rounded-xl px-4 py-2.5 border transition ${
+					className={`flex flex-col items-center gap-2 cursor-pointer rounded-xl p-3 border transition ${
 						selectedGender === "male"
-							? "bg-sky-500/20 border-sky-500/50 text-sky-300"
-							: "bg-slate-800/50 border-white/10 text-slate-400 hover:border-white/20"
+							? "bg-sky-500/20 border-sky-500/50"
+							: "bg-slate-800/50 border-white/10 hover:border-white/20"
 					}`}
 				>
 					<input
@@ -17,14 +19,15 @@ const GenderCheckbox = ({ onCheckboxChange, selectedGender }) => {
 						checked={selectedGender === "male"}
 						onChange={() => onCheckboxChange("male")}
 					/>
-					<span className='text-sm font-medium'>Male</span>
+					<UserAvatar user={{ gender: "male", username: "male" }} size='sm' />
+					<span className='text-sm font-medium text-slate-200'>Male</span>
 				</label>
 
 				<label
-					className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 cursor-pointer rounded-xl px-4 py-2.5 border transition ${
+					className={`flex flex-col items-center gap-2 cursor-pointer rounded-xl p-3 border transition ${
 						selectedGender === "female"
-							? "bg-sky-500/20 border-sky-500/50 text-sky-300"
-							: "bg-slate-800/50 border-white/10 text-slate-400 hover:border-white/20"
+							? "bg-sky-500/20 border-sky-500/50"
+							: "bg-slate-800/50 border-white/10 hover:border-white/20"
 					}`}
 				>
 					<input
@@ -34,7 +37,8 @@ const GenderCheckbox = ({ onCheckboxChange, selectedGender }) => {
 						checked={selectedGender === "female"}
 						onChange={() => onCheckboxChange("female")}
 					/>
-					<span className='text-sm font-medium'>Female</span>
+					<UserAvatar user={{ gender: "female", username: "female" }} size='sm' />
+					<span className='text-sm font-medium text-slate-200'>Female</span>
 				</label>
 			</div>
 		</div>

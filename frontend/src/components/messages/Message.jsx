@@ -1,22 +1,19 @@
 import { useAuthContext } from "../../context/AuthContext";
 import { extractTime } from "../../utils/extractTime";
 import useConversation from "../../zustand/useConversation";
+import UserAvatar from "../common/UserAvatar";
 
 const Message = ({ message }) => {
 	const { authUser } = useAuthContext();
 	const { selectedConversation } = useConversation();
 	const fromMe = message.senderId === authUser._id;
 	const formattedTime = extractTime(message.createdAt);
-	const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
 	const shakeClass = message.shouldShake ? "shake" : "";
+	const sender = fromMe ? authUser : selectedConversation;
 
 	return (
 		<div className={`flex gap-2 sm:gap-3 mb-3 ${fromMe ? "flex-row-reverse" : "flex-row"}`}>
-			<div className='avatar shrink-0'>
-				<div className='w-8 h-8 sm:w-9 sm:h-9 rounded-full'>
-					<img alt='' src={profilePic} />
-				</div>
-			</div>
+			<UserAvatar user={sender} size='xs' />
 
 			<div
 				className={`flex flex-col max-w-[75%] xs:max-w-[80%] sm:max-w-[70%] ${
@@ -26,7 +23,7 @@ const Message = ({ message }) => {
 				<div
 					className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed break-words ${shakeClass} ${
 						fromMe
-							? "bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-br-md"
+							? "bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-br-md shadow-md shadow-sky-500/10"
 							: "bg-slate-700/90 text-slate-100 rounded-bl-md border border-white/5"
 					}`}
 				>

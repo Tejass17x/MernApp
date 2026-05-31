@@ -6,6 +6,7 @@ import Messages from "./Messages";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../../context/AuthContext";
 import { useSocketContext } from "../../context/SocketContext";
+import UserAvatar from "../common/UserAvatar";
 
 const MessageContainer = () => {
 	const { selectedConversation, setSelectedConversation } = useConversation();
@@ -45,15 +46,13 @@ const ChatHeader = ({ conversation, onBack }) => {
 				<IoArrowBack className='w-5 h-5' />
 			</button>
 
-			<div className={`avatar ${isOnline ? "online" : ""}`}>
-				<div className='w-10 h-10 rounded-full'>
-					<img src={conversation.profilePic} alt={conversation.fullName} />
-				</div>
-			</div>
+			<UserAvatar user={conversation} size='sm' online={isOnline} />
 
 			<div className='min-w-0 flex-1'>
 				<p className='font-semibold text-white truncate'>{conversation.fullName}</p>
-				<p className='text-xs text-slate-400'>{isOnline ? "Online" : "Offline"}</p>
+				<p className={`text-xs ${isOnline ? "text-emerald-400" : "text-slate-400"}`}>
+					{isOnline ? "Online" : "Offline"}
+				</p>
 			</div>
 		</div>
 	);
@@ -65,7 +64,8 @@ const NoChatSelected = () => {
 	return (
 		<div className='hidden md:flex flex-col items-center justify-center h-full min-h-[320px] p-6 text-center'>
 			<div className='glass-panel rounded-2xl p-8 max-w-sm animate-fade-in'>
-				<TiMessages className='text-5xl text-sky-400 mx-auto mb-4' />
+				<UserAvatar user={authUser} size='lg' ring className='mx-auto mb-4' />
+				<TiMessages className='text-4xl text-sky-400 mx-auto mb-3' />
 				<p className='text-lg font-semibold text-white mb-1'>Welcome, {authUser.fullName}</p>
 				<p className='text-sm text-slate-400'>Select a conversation from the sidebar to start chatting</p>
 			</div>

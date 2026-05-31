@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import GenderCheckbox from "./GenderCheckbox";
 import { useState } from "react";
 import useSignup from "../../hooks/useSignup";
+import UserAvatar from "../../components/common/UserAvatar";
 
 const SignUp = () => {
 	const [inputs, setInputs] = useState({
@@ -23,13 +24,22 @@ const SignUp = () => {
 		await signup(inputs);
 	};
 
+	const previewUser = {
+		fullName: inputs.fullName || "Your Name",
+		username: inputs.username || "username",
+		gender: inputs.gender || "male",
+	};
+
 	return (
-		<div className='auth-card my-4 sm:my-0'>
+		<div className='auth-card my-2 sm:my-0 max-h-[90dvh] overflow-y-auto'>
 			<div className='text-center mb-5 sm:mb-6'>
-				<h1 className='text-2xl sm:text-3xl font-bold text-white'>
-					Join <span className='text-sky-400'>ChatApp</span>
-				</h1>
-				<p className='text-sm text-slate-400 mt-2'>Create an account to start chatting</p>
+				{inputs.gender && (
+					<div className='flex justify-center mb-4'>
+						<UserAvatar user={previewUser} size='lg' ring />
+					</div>
+				)}
+				<h1 className='text-2xl sm:text-3xl font-bold text-white'>Create account</h1>
+				<p className='text-sm text-slate-400 mt-2'>Choose gender for your avatar</p>
 			</div>
 
 			<form onSubmit={handleSubmit} className='space-y-3 sm:space-y-4'>
@@ -38,7 +48,7 @@ const SignUp = () => {
 					<input
 						type='text'
 						placeholder='John Doe'
-						className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+						className='input-field'
 						value={inputs.fullName}
 						onChange={(e) => setInputs({ ...inputs, fullName: e.target.value })}
 						autoComplete='name'
@@ -50,7 +60,7 @@ const SignUp = () => {
 					<input
 						type='text'
 						placeholder='johndoe'
-						className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+						className='input-field'
 						value={inputs.username}
 						onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
 						autoComplete='username'
@@ -63,7 +73,7 @@ const SignUp = () => {
 						<input
 							type='password'
 							placeholder='Min. 6 characters'
-							className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+							className='input-field'
 							value={inputs.password}
 							onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
 							autoComplete='new-password'
@@ -75,7 +85,7 @@ const SignUp = () => {
 						<input
 							type='password'
 							placeholder='Repeat password'
-							className='w-full rounded-xl px-4 py-2.5 text-sm bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50'
+							className='input-field'
 							value={inputs.confirmPassword}
 							onChange={(e) => setInputs({ ...inputs, confirmPassword: e.target.value })}
 							autoComplete='new-password'
@@ -85,18 +95,14 @@ const SignUp = () => {
 
 				<GenderCheckbox onCheckboxChange={handleCheckboxChange} selectedGender={inputs.gender} />
 
-				<button
-					type='submit'
-					disabled={loading}
-					className='w-full btn bg-sky-500 hover:bg-sky-400 border-0 text-white rounded-xl mt-1 h-11'
-				>
+				<button type='submit' disabled={loading} className='btn-primary'>
 					{loading ? <span className='loading loading-spinner loading-sm' /> : "Create Account"}
 				</button>
 			</form>
 
 			<p className='text-center text-sm text-slate-400 mt-5'>
 				Already have an account?{" "}
-				<Link to='/login' className='text-sky-400 hover:text-sky-300 font-medium'>
+				<Link to='/login' className='text-sky-400 hover:text-sky-300 font-medium transition-colors'>
 					Sign in
 				</Link>
 			</p>
