@@ -18,6 +18,16 @@ const useSignup = () => {
 				body: JSON.stringify({ fullName, username, password, confirmPassword, gender }),
 			});
 
+			if (!res.ok) {
+				const contentType = res.headers.get("content-type");
+				if (contentType && contentType.includes("application/json")) {
+					const data = await res.json();
+					throw new Error(data.error || `HTTP Error: ${res.status}`);
+				} else {
+					throw new Error(`Server Error: ${res.status} ${res.statusText}`);
+				}
+			}
+
 			const data = await res.json();
 			if (data.error) {
 				throw new Error(data.error);
@@ -25,7 +35,8 @@ const useSignup = () => {
 			localStorage.setItem("chat-user", JSON.stringify(data));
 			setAuthUser(data);
 		} catch (error) {
-			toast.error(error.message);
+			toast.error(error.message || "Signup failed");
+			console.error("Signup error:", error);
 		} finally {
 			setLoading(false);
 		}
