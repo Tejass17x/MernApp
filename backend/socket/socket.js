@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: "*", // Allow all origins for Socket.io
+		origin: process.env.CLIENT_URL || true,
 		methods: ["GET", "POST"],
 		credentials: true,
 	},

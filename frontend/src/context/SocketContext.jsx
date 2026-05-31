@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
+import { API_BASE } from "../utils/api";
 
 const SocketContext = createContext();
 
@@ -15,12 +16,14 @@ export const SocketContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (authUser) {
-			// Connect to same domain (backend serves frontend on same Render instance)
-			const socket = io({
-				query: {
-					userId: authUser._id,
-				},
-			});
+			const socket = API_BASE
+				? io(API_BASE, {
+						query: { userId: authUser._id },
+						withCredentials: true,
+					})
+				: io({
+						query: { userId: authUser._id },
+					});
 
 			setSocket(socket);
 
