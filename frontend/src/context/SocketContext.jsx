@@ -15,8 +15,8 @@ export const SocketContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (authUser) {
-			const backendURL = import.meta.env.VITE_BACKEND_URL || " https://mernapp-xgyc.onrender.com";
-			const socket = io(backendURL, {
+			// Connect to same domain (backend serves frontend on same Render instance)
+			const socket = io({
 				query: {
 					userId: authUser._id,
 				},
