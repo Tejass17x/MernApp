@@ -1,14 +1,14 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-import { CLIENT_URL } from "../config/env.js";
+import { CLIENT_URLS } from "../config/env.js";
 
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
 	cors: {
-		origin: CLIENT_URL || true,
+		origin: CLIENT_URLS.length > 0 ? CLIENT_URLS : true,
 		methods: ["GET", "POST"],
 		credentials: true,
 	},

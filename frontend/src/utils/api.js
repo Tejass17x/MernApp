@@ -9,17 +9,36 @@ function normalizeUrl(url) {
 
 export const API_BASE = normalizeUrl(import.meta.env.VITE_BACKEND_URL || "");
 
-export const apiUrl = (path) => (API_BASE ? `${API_BASE}${path}` : path);
+export const apiUrl = (path) => {
+	if (!API_BASE) {
+		if (import.meta.env.PROD) {
+			throw new Error(
+				"Backend URL missing. On Render, set VITE_BACKEND_URL to your backend URL and redeploy the frontend."
+			);
+		}
+		return path;
+	}
+	return `${API_BASE}${path}`;
+};
 
 export async function apiFetch(path, options = {}) {
-	const res = await fetch(apiUrl(path), {
-		credentials: "include",
-		...options,
-		headers: {
-			"Content-Type": "application/json",
-			...options.headers,
-		},
-	});
+	const url = apiUrl(path);
+
+	let res;
+	try {
+		res = await fetch(url, {
+			credentials: "include",
+			...options,
+			headers: {
+				"Content-Type": "application/json",
+				...options.headers,
+			},
+		});
+	} catch {
+		throw new Error(
+			`Cannot reach backend at ${url}. Check VITE_BACKEND_URL on frontend and CLIENT_URL on backend, then redeploy both.`
+		);
+	}
 
 	if (!res.ok) {
 		const contentType = res.headers.get("content-type");

@@ -1,5 +1,4 @@
 services:
-  # Backend API + Socket.io
   - type: web
     name: mern-chat-backend
     env: node
@@ -20,12 +19,8 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: CLIENT_URL
-        fromService:
-          type: web
-          name: mern-chat-frontend
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false
 
-  # Frontend React app (static site)
   - type: web
     name: mern-chat-frontend
     runtime: static
@@ -38,7 +33,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_BACKEND_URL
-        fromService:
-          type: web
-          name: mern-chat-backend
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false

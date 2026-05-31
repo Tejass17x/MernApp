@@ -10,7 +10,8 @@ import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import connectToMongoDB from "./db/connectToMongoDB.js";
 import { app, server } from "./socket/socket.js";
-import { CLIENT_URL, SERVE_FRONTEND } from "./config/env.js";
+import { CLIENT_URL, CLIENT_URLS, SERVE_FRONTEND } from "./config/env.js";
+import { corsOptions } from "./config/cors.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,23 +21,31 @@ const isProduction = process.env.NODE_ENV === "production";
 
 app.set("trust proxy", 1);
 
-if (CLIENT_URL) {
-	app.use(
-		cors({
-			origin: CLIENT_URL,
-			credentials: true,
-		})
-	);
-} else if (isProduction && !SERVE_FRONTEND) {
-	console.error("CLIENT_URL is required when SERVE_FRONTEND=false in production");
-	process.exit(1);
+if (SERVE_FRONTEND) {
+	if (CLIENT_URLS.length > 0) {
+		app.use(cors(corsOptions));
+		app.options("*", cors(corsOptions));
+	}
+} else {
+	if (CLIENT_URLS.length === 0) {
+		console.error("CLIENT_URL is required when SERVE_FRONTEND=false");
+		console.error("Set CLIENT_URL to your frontend URL on Render, e.g. https://mern-chat-frontend.onrender.com");
+		if (isProduction) process.exit(1);
+	} else {
+		app.use(cors(corsOptions));
+		app.options("*", cors(corsOptions));
+	}
 }
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.get("/api/health", (_req, res) => {
-	res.status(200).json({ status: "ok", clientUrl: CLIENT_URL || null });
+	res.status(200).json({
+		status: "ok",
+		clientUrl: CLIENT_URL,
+		allowedOrigins: CLIENT_URLS,
+	});
 });
 
 app.use("/api/auth", authRoutes);
@@ -61,7 +70,9 @@ const startServer = async () => {
 		await connectToMongoDB();
 		server.listen(PORT, () => {
 			console.log(`Server running on port ${PORT}`);
-			if (CLIENT_URL) console.log(`CORS enabled for: ${CLIENT_URL}`);
+			if (CLIENT_URLS.length > 0) {
+				console.log(`CORS enabled for: ${CLIENT_URLS.join(", ")}`);
+			}
 		});
 	} catch (error) {
 		console.error("Failed to start server:", error.message);
