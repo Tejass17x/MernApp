@@ -1,4 +1,13 @@
-export const API_BASE = import.meta.env.VITE_BACKEND_URL || "";
+function normalizeUrl(url) {
+	if (!url) return "";
+	const trimmed = url.trim().replace(/\/$/, "");
+	if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+		return trimmed;
+	}
+	return `https://${trimmed}`;
+}
+
+export const API_BASE = normalizeUrl(import.meta.env.VITE_BACKEND_URL || "");
 
 export const apiUrl = (path) => (API_BASE ? `${API_BASE}${path}` : path);
 

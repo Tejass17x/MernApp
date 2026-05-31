@@ -1,138 +1,140 @@
-# Deploy MERN Chat App on Render (Frontend + Backend)
+# Render Deployment — Separate Frontend & Backend
 
-This project uses **one Render Web Service** for both frontend and backend:
+Deploy **two services** from the same GitHub repo:
 
-- Vite builds the React app into `frontend/dist`
-- Express serves the API at `/api/*` and the React app at `/`
-
-## Prerequisites
-
-1. GitHub repo: https://github.com/Tejass17x/MernApp.git
-2. [Render](https://render.com) account (free tier works)
-3. MongoDB Atlas cluster with network access enabled
+| Service | Type | URL example |
+|---------|------|-------------|
+| `mern-chat-backend` | Web Service (Node) | `https://mern-chat-backend.onrender.com` |
+| `mern-chat-frontend` | Static Site (React) | `https://mern-chat-frontend.onrender.com` |
 
 ---
 
-## Step 1: MongoDB Atlas setup
+## Option A: Deploy with Blueprint (recommended)
 
-1. Open [MongoDB Atlas](https://cloud.mongodb.com)
-2. Go to **Network Access** → **Add IP Address** → **Allow Access from Anywhere** (`0.0.0.0/0`)
-3. Go to **Database Access** and confirm your database user exists
-4. Copy your connection string and add a database name before the `?`:
+1. Push this repo to GitHub
+2. Go to [Render Dashboard](https://dashboard.render.com) → **New +** → **Blueprint**
+3. Connect repo `Tejass17x/MernApp`
+4. Render reads `render.yaml` and creates both services
+5. When prompted, set these secrets manually:
+   - `MONGO_URI`
+   - `JWT_SECRET`
+6. Wait for both services to deploy (~10–15 min)
 
-```
-mongodb+srv://USER:PASSWORD@cluster0.cpickdt.mongodb.net/chatapp?retryWrites=true&w=majority
-```
-
-Use your real username/password. Do **not** commit this string to GitHub.
-
----
-
-## Step 2: Push latest code to GitHub
-
-```bash
-git add .
-git commit -m "Fix production build and Render deployment"
-git push origin main
-```
+`render.yaml` automatically links:
+- `VITE_BACKEND_URL` on frontend → backend URL
+- `CLIENT_URL` on backend → frontend URL
 
 ---
 
-## Step 3: Create Render Web Service
+## Option B: Manual setup (two services)
 
-1. Go to [Render Dashboard](https://dashboard.render.com)
-2. Click **New +** → **Web Service**
-3. Connect GitHub and select **MernApp**
-4. Use these settings:
+### 1. Deploy backend first
+
+**New +** → **Web Service** → connect repo
 
 | Setting | Value |
 |---------|-------|
-| **Name** | `mern-chat-app` (or any name) |
-| **Region** | Oregon (or nearest) |
-| **Branch** | `main` |
-| **Root Directory** | *(leave empty)* |
-| **Runtime** | Node |
-| **Build Command** | `npm install && npm install --prefix frontend && npm run build --prefix frontend` |
-| **Start Command** | `npm start` |
-| **Instance Type** | Free |
+| Name | `mern-chat-backend` |
+| Root Directory | *(empty)* |
+| Build Command | `npm install` |
+| Start Command | `npm start` |
 
----
-
-## Step 4: Add environment variables on Render
-
-In your service → **Environment** → add:
+**Environment variables:**
 
 | Key | Value |
 |-----|-------|
 | `NODE_ENV` | `production` |
 | `PORT` | `5000` |
-| `MONGO_URI` | Your full MongoDB connection string (with `/chatapp` database name) |
-| `JWT_SECRET` | A long random string (32+ characters) |
+| `SERVE_FRONTEND` | `false` |
+| `MONGO_URI` | `mongodb+srv://USER:PASSWORD@cluster0.cpickdt.mongodb.net/chatapp?retryWrites=true&w=majority` |
+| `JWT_SECRET` | long random string (32+ chars) |
+| `CLIENT_URL` | *(add after frontend deploys)* `https://mern-chat-frontend.onrender.com` |
 
-Example JWT secret (generate your own):
+After deploy, note backend URL: `https://mern-chat-backend.onrender.com`
 
-```
-a8f3c91e2b7d4f6a9c1e5b8d2f7a4c6e9b1d3f5a7c9e2b4d6f8a1c3e5b7d9f2
-```
-
-Do **not** set `CLIENT_URL` or `VITE_BACKEND_URL` for this single-service setup.
+Test: open `https://mern-chat-backend.onrender.com/api/health`
 
 ---
 
-## Step 5: Deploy
+### 2. Deploy frontend
 
-1. Click **Create Web Service** (or **Manual Deploy** if already created)
-2. Wait 10–15 minutes for the first build
-3. Open your live URL: `https://mern-chat-app-xxxx.onrender.com`
+**New +** → **Static Site** → same repo
+
+| Setting | Value |
+|---------|-------|
+| Name | `mern-chat-frontend` |
+| Root Directory | `frontend` |
+| Build Command | `npm install && npm run build` |
+| Publish Directory | `dist` |
+
+**Environment variable (required at build time):**
+
+| Key | Value |
+|-----|-------|
+| `VITE_BACKEND_URL` | `https://mern-chat-backend.onrender.com` |
+
+Add SPA rewrite rule: **Redirects/Rewrites** → `/*` → `/index.html` (200)
 
 ---
 
-## Step 6: Verify deployment
+### 3. Link backend to frontend
 
-1. **Health check:** visit `https://YOUR-URL.onrender.com/api/health` → should return `{"status":"ok"}`
-2. **Frontend:** open `https://YOUR-URL.onrender.com` → login/signup page loads
-3. **Signup/Login:** create an account and log in
-4. **Real-time chat:** open two browser windows, log in as different users, send messages
+Go back to **mern-chat-backend** → **Environment** → set:
+
+```
+CLIENT_URL=https://mern-chat-frontend.onrender.com
+```
+
+Save → backend redeploys automatically.
+
+---
+
+## MongoDB Atlas
+
+1. **Network Access** → allow `0.0.0.0/0`
+2. Use connection string with database name:
+
+```
+mongodb+srv://USER:PASSWORD@cluster0.cpickdt.mongodb.net/chatapp?retryWrites=true&w=majority
+```
 
 ---
 
 ## How frontend connects to backend
 
-| Feature | Connection |
-|---------|------------|
-| Login / Signup / API | Relative paths like `/api/auth/login` → same Render URL |
-| Auth cookies | `httpOnly` JWT cookie, `secure` in production |
-| Socket.io | Connects to same origin automatically |
-| Static files | Served from `frontend/dist` by Express |
+```
+Frontend (Static)                    Backend (Web Service)
+mern-chat-frontend.onrender.com  →  mern-chat-backend.onrender.com
+     │                                      │
+     ├── fetch(VITE_BACKEND_URL/api/...)    ├── Express API
+     └── Socket.io(VITE_BACKEND_URL)       └── Socket.io
+```
+
+- API calls use `VITE_BACKEND_URL` (baked in at build time)
+- Auth uses `httpOnly` cookies with `SameSite=None; Secure`
+- Backend CORS allows only `CLIENT_URL` (your frontend URL)
 
 ---
 
-## Local development
+## Local development (separate mode)
 
-1. Copy `.env.example` to `.env` in the project root
-2. Fill in `MONGO_URI` and `JWT_SECRET`
-3. Run:
-
-```bash
-npm install
-npm install --prefix frontend
-npm run dev
+**Root `.env`:**
+```
+PORT=5000
+NODE_ENV=development
+SERVE_FRONTEND=false
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_secret
+CLIENT_URL=http://localhost:3000
 ```
 
-4. In another terminal for frontend hot reload (optional):
-
-```bash
-npm run dev --prefix frontend
+**`frontend/.env.local`:**
+```
+VITE_BACKEND_URL=http://localhost:5000
 ```
 
-Or build and run production mode locally:
-
-```bash
-npm run build --prefix frontend
-npm start
-```
-
-Visit `http://localhost:5000`
+Terminal 1: `npm start`  
+Terminal 2: `npm run dev --prefix frontend`
 
 ---
 
@@ -140,27 +142,8 @@ Visit `http://localhost:5000`
 
 | Problem | Fix |
 |---------|-----|
-| Build fails on Render | Check Logs tab; ensure `frontend/src/utils/api.js` exists |
-| `MONGO_URI not set` | Add `MONGO_URI` in Render Environment |
-| MongoDB connection error | Allow `0.0.0.0/0` in Atlas Network Access |
-| Login works but API returns 401 | Hard refresh; cookies require HTTPS on Render (automatic) |
-| App sleeps on free tier | First request after idle takes ~30–60 seconds (Render free tier) |
-| Blank page | Build may have failed; check that `frontend/dist` was created in logs |
-
----
-
-## Optional: separate frontend + backend on Render
-
-Only use this if you want two services:
-
-**Backend Web Service**
-- Build: `npm install`
-- Start: `npm start`
-- Env: `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL=https://your-frontend.onrender.com`
-
-**Frontend Static Site**
-- Build: `npm install && npm run build`
-- Publish directory: `dist`
-- Env at build time: `VITE_BACKEND_URL=https://your-backend.onrender.com`
-
-The single-service setup above is simpler and recommended for this project.
+| CORS error | Set `CLIENT_URL` on backend to exact frontend URL (with `https://`) |
+| Login fails / 401 | Redeploy frontend after setting `VITE_BACKEND_URL`; hard refresh browser |
+| Socket not connecting | Check `CLIENT_URL` on backend matches frontend URL |
+| Blank page on refresh | Add SPA rewrite `/* → /index.html` on static site |
+| Build fails | Check Render logs; ensure env vars are set before build |

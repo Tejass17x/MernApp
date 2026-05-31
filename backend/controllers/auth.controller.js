@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
+import { CLIENT_URL } from "../config/env.js";
 
 export const signup = async (req, res) => {
 	try {
@@ -80,7 +81,7 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
 	try {
 		const isProduction = process.env.NODE_ENV === "production";
-		const isCrossOrigin = Boolean(process.env.CLIENT_URL);
+		const isCrossOrigin = Boolean(CLIENT_URL);
 
 		res.cookie("jwt", "", {
 			maxAge: 0,
