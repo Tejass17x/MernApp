@@ -34,7 +34,12 @@ export async function apiFetch(path, options = {}) {
 				...options.headers,
 			},
 		});
-	} catch {
+	} catch (error) {
+		if (error instanceof TypeError) {
+			throw new Error(
+				`Cannot reach backend at ${url}. Backend may be sleeping (wait 60s) or CORS is misconfigured. Check CLIENT_URL on backend matches your frontend URL exactly.`
+			);
+		}
 		throw new Error(
 			`Cannot reach backend at ${url}. Check VITE_BACKEND_URL on frontend and CLIENT_URL on backend, then redeploy both.`
 		);

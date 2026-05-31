@@ -24,7 +24,6 @@ app.set("trust proxy", 1);
 if (SERVE_FRONTEND) {
 	if (CLIENT_URLS.length > 0) {
 		app.use(cors(corsOptions));
-		app.options("*", cors(corsOptions));
 	}
 } else {
 	if (CLIENT_URLS.length === 0) {
@@ -33,9 +32,14 @@ if (SERVE_FRONTEND) {
 		if (isProduction) process.exit(1);
 	} else {
 		app.use(cors(corsOptions));
-		app.options("*", cors(corsOptions));
 	}
 }
+
+// Handle CORS preflight for all routes (fixes browser "Cannot reach backend" on login)
+app.use((req, res, next) => {
+	if (req.method !== "OPTIONS") return next();
+	return cors(corsOptions)(req, res, next);
+});
 
 app.use(express.json());
 app.use(cookieParser());

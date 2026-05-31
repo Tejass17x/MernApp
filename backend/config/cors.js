@@ -1,16 +1,9 @@
-import { CLIENT_URLS, isAllowedOrigin } from "../config/env.js";
+import { CLIENT_URLS } from "../config/env.js";
 
 export const corsOptions = {
-	origin(origin, callback) {
-		if (isAllowedOrigin(origin)) {
-			callback(null, true);
-			return;
-		}
-		console.warn(`CORS blocked request from origin: ${origin || "unknown"}`);
-		console.warn(`Allowed origins: ${CLIENT_URLS.join(", ") || "none — set CLIENT_URL on Render"}`);
-		callback(new Error("Not allowed by CORS"));
-	},
+	origin: CLIENT_URLS.length > 0 ? CLIENT_URLS : false,
 	credentials: true,
 	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 	allowedHeaders: ["Content-Type", "Authorization"],
+	optionsSuccessStatus: 204,
 };
