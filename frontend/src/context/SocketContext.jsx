@@ -15,30 +15,20 @@ export const SocketContextProvider = ({ children }) => {
 	const { authUser } = useAuthContext();
 
 	useEffect(() => {
-		if (authUser) {
-			const socket = API_BASE
-				? io(API_BASE, {
-						query: { userId: authUser._id },
-						withCredentials: true,
-					})
-				: io({
-						query: { userId: authUser._id },
-					});
-
-			setSocket(socket);
-
-			// socket.on() is used to listen to the events. can be used both on client and server side
-			socket.on("getOnlineUsers", (users) => {
-				setOnlineUsers(users);
-			});
-
-			return () => socket.close();
-		} else {
-			if (socket) {
-				socket.close();
-				setSocket(null);
-			}
+		if (!authUser) {
+			setSocket(null);
+			return;
 		}
+
+		const socketInstance = io(API_BASE || undefined, {
+			query: { userId: authUser._id },
+			withCredentials: true,
+		});
+
+		socketInstance.on("getOnlineUsers", setOnlineUsers);
+		setSocket(socketInstance);
+
+		return () => socketInstance.close();
 	}, [authUser]);
 
 	return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;

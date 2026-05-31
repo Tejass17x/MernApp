@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import { apiUrl } from "../utils/api";
+import { apiFetch } from "../utils/api";
 
 const useLogout = () => {
 	const [loading, setLoading] = useState(false);
@@ -10,16 +10,7 @@ const useLogout = () => {
 	const logout = async () => {
 		setLoading(true);
 		try {
-			const res = await fetch(apiUrl("/api/auth/logout"), {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-			});
-			const data = await res.json();
-			if (data.error) {
-				throw new Error(data.error);
-			}
-
+			await apiFetch("/api/auth/logout", { method: "POST" });
 			localStorage.removeItem("chat-user");
 			setAuthUser(null);
 		} catch (error) {
@@ -31,4 +22,5 @@ const useLogout = () => {
 
 	return { loading, logout };
 };
+
 export default useLogout;
