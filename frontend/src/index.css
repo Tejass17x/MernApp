@@ -2,32 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-	background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("/bg.png");
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
+@layer base {
+	html {
+		@apply antialiased;
+	}
+
+	body {
+		@apply min-h-dvh text-gray-100;
+		background:
+			radial-gradient(ellipse at top, rgba(56, 189, 248, 0.12), transparent 50%),
+			radial-gradient(ellipse at bottom right, rgba(99, 102, 241, 0.15), transparent 50%),
+			linear-gradient(160deg, #0f172a 0%, #1e1b4b 45%, #0f172a 100%);
+		background-attachment: fixed;
+	}
+
+	#root {
+		@apply min-h-dvh;
+	}
 }
 
-/* dark mode looking scrollbar */
+@layer components {
+	.glass-panel {
+		@apply bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-2xl;
+	}
+
+	.auth-card {
+		@apply glass-panel w-full max-w-md rounded-2xl p-6 sm:p-8 animate-fade-in;
+	}
+
+	.chat-shell {
+		@apply glass-panel w-full h-full max-h-dvh sm:max-h-[min(90dvh,720px)] rounded-none sm:rounded-2xl overflow-hidden flex;
+	}
+}
+
 ::-webkit-scrollbar {
-	width: 8px;
+	width: 6px;
+	height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-	background: #555;
+	background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #121212;
-	border-radius: 5px;
+	background: rgba(148, 163, 184, 0.35);
+	border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: #242424;
+	background: rgba(148, 163, 184, 0.55);
 }
 
-/* SHAKE ANIMATION ON HORIZONTAL DIRECTION */
 .shake {
 	animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0.2s both;
 	transform: translate3d(0, 0, 0);
@@ -55,5 +80,11 @@ body {
 	40%,
 	60% {
 		transform: translate3d(4px, 0, 0);
+	}
+}
+
+@supports (padding: env(safe-area-inset-bottom)) {
+	.safe-bottom {
+		padding-bottom: env(safe-area-inset-bottom);
 	}
 }

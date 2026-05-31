@@ -7,22 +7,35 @@ const Message = ({ message }) => {
 	const { selectedConversation } = useConversation();
 	const fromMe = message.senderId === authUser._id;
 	const formattedTime = extractTime(message.createdAt);
-	const chatClassName = fromMe ? "chat-end" : "chat-start";
 	const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
-	const bubbleBgColor = fromMe ? "bg-blue-500" : "";
-
 	const shakeClass = message.shouldShake ? "shake" : "";
 
 	return (
-		<div className={`chat ${chatClassName}`}>
-			<div className='chat-image avatar'>
-				<div className='w-10 rounded-full'>
-					<img alt='Tailwind CSS chat bubble component' src={profilePic} />
+		<div className={`flex gap-2 sm:gap-3 mb-3 ${fromMe ? "flex-row-reverse" : "flex-row"}`}>
+			<div className='avatar shrink-0'>
+				<div className='w-8 h-8 sm:w-9 sm:h-9 rounded-full'>
+					<img alt='' src={profilePic} />
 				</div>
 			</div>
-			<div className={`chat-bubble text-white ${bubbleBgColor} ${shakeClass} pb-2`}>{message.message}</div>
-			<div className='chat-footer opacity-50 text-xs flex gap-1 items-center'>{formattedTime}</div>
+
+			<div
+				className={`flex flex-col max-w-[75%] xs:max-w-[80%] sm:max-w-[70%] ${
+					fromMe ? "items-end" : "items-start"
+				}`}
+			>
+				<div
+					className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed break-words ${shakeClass} ${
+						fromMe
+							? "bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-br-md"
+							: "bg-slate-700/90 text-slate-100 rounded-bl-md border border-white/5"
+					}`}
+				>
+					{message.message}
+				</div>
+				<span className='text-[10px] sm:text-xs text-slate-500 mt-1 px-1'>{formattedTime}</span>
+			</div>
 		</div>
 	);
 };
+
 export default Message;

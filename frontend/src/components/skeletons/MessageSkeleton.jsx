@@ -1,20 +1,16 @@
 const MessageSkeleton = () => {
 	return (
-		<>
+		<div className='space-y-4 animate-pulse'>
 			<div className='flex gap-3 items-center'>
-				<div className='skeleton w-10 h-10 rounded-full shrink-0'></div>
-				<div className='flex flex-col gap-1'>
-					<div className='skeleton h-4 w-40'></div>
-					<div className='skeleton h-4 w-40'></div>
-				</div>
+				<div className='skeleton w-9 h-9 rounded-full shrink-0 bg-slate-700' />
+				<div className='skeleton h-10 w-48 rounded-2xl bg-slate-700' />
 			</div>
 			<div className='flex gap-3 items-center justify-end'>
-				<div className='flex flex-col gap-1'>
-					<div className='skeleton h-4 w-40'></div>
-				</div>
-				<div className='skeleton w-10 h-10 rounded-full shrink-0'></div>
+				<div className='skeleton h-10 w-36 rounded-2xl bg-slate-700' />
+				<div className='skeleton w-9 h-9 rounded-full shrink-0 bg-slate-700' />
 			</div>
-		</>
+		</div>
 	);
 };
+
 export default MessageSkeleton;
